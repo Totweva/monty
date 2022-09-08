@@ -7,7 +7,6 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <fcnt1.h>
 
 #define STACK 0
 #define QUEUE 1
