@@ -1,70 +1,55 @@
 #include "monty.h"
+
 /**
-  *monty_nop- nothing
-  *@head: stack head
-  *@counter: line_number
-  *Return: no return
+ * monty_nop - Does absolutely nothing for the Monty opcode 'nop'.
+ * @stack: A pointer to the top mode node of a stack_t linked list.
+ * @line_number: The current working line number of a Monty bytecodes file.
  */
-void f_nop(stack_t **head, unsigned int counter)
+void monty_nop(stack_t **stack, unsigned int line_number)
 {
-	(void) counter;
-	(void) head;
+	(void)stack;
+	(void)line_number;
 }
 
-
 /**
- * monty_pchar - prints the char at the top of the stack,
- * followed by a new line
- * @head: stack head
- * @counter: line_number
- * Return: no return
-*/
-void monty_pchar(stack_t **head, unsigned int counter)
+ * monty_pchar - Prints the character in the top value
+ *               node of a stack_t linked list.
+ * @stack: A pointer to the top mode node of a stack_t linked list.
+ * @line_number: The current working line number of a Monty bytecodes file.
+ */
+void monty_pchar(stack_t **stack, unsigned int line_number)
 {
-	stack_t *h;
+	if ((*stack)->next == NULL)
+	{
+		set_op_tok_error(pchar_error(line_number, "stack empty"));
+		return;
+	}
+	if ((*stack)->next->n < 0 || (*stack)->next->n > 127)
+	{
+		set_op_tok_error(pchar_error(line_number,
+					     "value out of range"));
+		return;
+	}
 
-	h = *head;
-	if (!h)
-	{
-		fprintf(stderr, "L%d: can't pchar, stack empty\n", counter);
-		fclose(var.file);
-		free(var.content);
-		free_stack(*head);
-		exit(EXIT_FAILURE);
-	}
-	if (h->n > 127 || h->n < 0)
-	{
-		fprintf(stderr, "L%d: can't pchar, value out of range\n", counter);
-		fclose(var.file);
-		free(var.content);
-		free_stack(*head);
-		exit(EXIT_FAILURE);
-	}
-	printf("%c\n", h->n);
+	printf("%c\n", (*stack)->next->n);
 }
 
-
 /**
- * monty_pstr - prints the string starting at the top of the stack,
- * followed by a new
- * @head: stack head
- * @counter: line_number
- * Return: no return
-*/
-void monty_pstr(stack_t **head, unsigned int counter)
+ * monty_pstr - Prints the string contained in a stack_t linked list.
+ * @stack: A pointer to the top mode node of a stack_t linked list.
+ * @line_number: The current working line number of a Monty bytecodes file.
+ */
+void monty_pstr(stack_t **stack, unsigned int line_number)
 {
-	stack_t *h;
-	(void)counter;
+	stack_t *tmp = (*stack)->next;
 
-	h = *head;
-	while (h)
+	while (tmp && tmp->n != 0 && (tmp->n > 0 && tmp->n <= 127))
 	{
-		if (h->n > 127 || h->n <= 0)
-		{
-			break;
-		}
-		printf("%c", h->n);
-		h = h->next;
+		printf("%c", tmp->n);
+		tmp = tmp->next;
 	}
+
 	printf("\n");
+
+	(void)line_number;
 }
